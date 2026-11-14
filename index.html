@@ -31,7 +31,11 @@ a{color:inherit;text-decoration:none}
 .imp.down{background:#ff6b6b1c;border-color:#ff6b6b45}
 .imp.wait{background:rgba(232,184,74,.14);border-color:rgba(232,184,74,.45);color:var(--gold);padding:3px 10px}
 .imp img{width:20px;height:20px;border-radius:50%;object-fit:cover;border:1px solid currentColor}
-.ev-time{font-size:10.5px;color:var(--gold);margin-top:2px}
+.ev-time{font-size:10.5px;color:var(--gold);margin-top:4px}
+.ev.big{background:linear-gradient(145deg,rgba(25,52,37,.65),rgba(0,0,0,.45));border-color:rgba(61,220,132,.48);box-shadow:0 0 28px rgba(61,220,132,.14),inset 0 1px 0 rgba(255,255,255,.08)}
+.ev.big.bear{background:linear-gradient(145deg,rgba(52,22,25,.6),rgba(0,0,0,.45));border-color:rgba(255,107,107,.48);box-shadow:0 0 28px rgba(255,107,107,.14)}
+.ev.big.wait{border-color:rgba(232,184,74,.48);box-shadow:0 0 28px rgba(232,184,74,.12)}
+.ev.big .ev-time{display:inline-flex;align-items:center;gap:5px;width:max-content;padding:3px 10px;border-radius:999px;background:rgba(232,184,74,.16);border:1px solid rgba(232,184,74,.45);color:#ffd875;font-weight:700;margin-top:6px}
 .vlink{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;padding:2px 8px;border-radius:999px;border:1px solid rgba(61,220,132,.5);background:rgba(61,220,132,.15);color:var(--green);font-weight:600}
 .vlink.wait{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:var(--mute);font-weight:400}
 .pill{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:#fff;padding:8px 18px;border-radius:999px;border:1px solid rgba(255,77,109,.8);background:linear-gradient(135deg,#ff0050 0%,#ff4d6d 55%,#00f2fe 140%);box-shadow:0 0 22px rgba(255,0,80,.6),0 0 40px rgba(0,242,254,.25);animation:heartbeat 1.45s ease-in-out infinite;transform-origin:center}
@@ -107,6 +111,10 @@ h2{font-size:28px;font-weight:700}
 .panel h4{font-size:17px}.panel .cap{font-size:12px;color:var(--mute);margin-bottom:14px}
 .week .it{position:relative;padding:0 0 14px 18px;border-left:1px dashed var(--line);margin-left:4px}
 .week .it::before{content:"";position:absolute;left:-5px;top:4px;width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.week .it.st-down::before{background:var(--red);box-shadow:0 0 8px var(--red)}
+.week .it.st-wait::before{background:var(--gold);box-shadow:0 0 8px var(--gold)}
+.week .it.first::before{animation:dotPulse 1.6s ease-in-out infinite}
+@keyframes dotPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.45);opacity:.75}}
 .week .it:last-child{padding-bottom:0}
 .week .d{font-size:11px;color:var(--gold)}
 .week .t{font-size:14px;font-weight:600}
@@ -257,10 +265,11 @@ function enrichTikTok(url,cb){
 
 function renderEvents(list){
  document.getElementById("feed").innerHTML=list.map((e,i)=>{
+  const st=e.hasVideo?(e.impact=='down'?'bear':'bull'):'wait';
   const badge=e.hasVideo
    ?`<span class="imp ${e.impact}"><img src="${e.impact=='up'?'bull.jpg':'bear.jpg'}" alt="">${e.impact=='up'?'BULL · DỰ BÁO TĂNG ▲':'BEAR · DỰ BÁO GIẢM ▼'}</span>`
    :`<span class="imp wait">⏳ CHỜ VIDEO NHẬN ĐỊNH</span>`;
-  return `<a class="ev ${i==0?'big':''}" id="evcard-${e.key||i}" href="${e.video||TIKTOK}" target="_blank">
+  return `<a class="ev ${i==0?'big '+st:''}" id="evcard-${e.key||i}" href="${e.video||TIKTOK}" target="_blank">
    <div class="thumb" id="thumb-${e.key||i}" style="background-image:url('${e.img}')"><span class="play">▶</span><span class="views mono">${e.views}</span></div>
    <div class="body">
     <div class="row"><span class="tag t-${e.tag}">${e.tagName||TAGN[e.tag]||e.tag}</span>${badge}</div>
@@ -370,14 +379,15 @@ function buildLinkedFeed(upcoming){
 }
 
  function renderWeek(list){
- document.getElementById("week").innerHTML=list.map(w=>{
+ document.getElementById("week").innerHTML=list.map((w,i)=>{
   const cfg=EVENT_VIDEOS[w.key]||{};
   const focusTag=cfg.focus||w.tags[0]||"ngo";
-  const hasV=Boolean(cfg.video);
+  const hasV=Boolean(cfg.video&&cfg.video.trim());
+  const st=hasV?(cfg.impact=='down'?'st-down':'st-up'):'st-wait';
   const badge=hasV
    ?`<a class="vlink" href="${cfg.video}" target="_blank">▶ Xem video góc nhìn</a>`
    :`<a class="vlink wait" href="${TIKTOK}" target="_blank">⏳ Sắp có video</a>`;
-  return `<div class="it"><div class="d mono">${w.d}</div><div class="t">${w.t}</div>
+  return `<div class="it ${st} ${i==0?'first':''}"><div class="d mono">${w.d}</div><div class="t">${w.t}</div>
    <div class="tags"><span class="tag t-${focusTag}">${TAGN[focusTag]||focusTag}</span>${badge}</div></div>`;
  }).join("");
 }
