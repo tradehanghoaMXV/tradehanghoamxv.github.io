@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GrainDesk – Góc nhìn thị trường ngũ cốc</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07100b;--glass:rgba(22,40,30,.55);--line:rgba(120,200,150,.14);--green:#3ddc84;--red:#ff6b6b;--gold:#e8b84a;--txt:#eef5f0;--mute:#8fa89a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Be Vietnam Pro',sans-serif;color:var(--txt);min-height:100vh;
+ background:radial-gradient(1200px 600px at 10% -10%,#163a26 0%,transparent 60%),radial-gradient(900px 500px at 100% 100%,#1b2f12 0%,transparent 55%),var(--bg)}
+a{color:inherit;text-decoration:none}
+.mono{font-family:'JetBrains Mono',monospace}
+.app{max-width:1360px;margin:auto;padding:24px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:20px}
+.panel{background:var(--glass);border:1px solid var(--line);border-radius:22px;backdrop-filter:blur(14px);padding:22px}
+/* LEFT */
+.left{display:flex;flex-direction:column;gap:16px;position:sticky;top:24px;align-self:start}
+.topbar{display:flex;justify-content:space-between;align-items:center}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:1.5px}
+.logo i{width:30px;height:30px;border-radius:50%;background:conic-gradient(var(--green),var(--gold),var(--green));display:grid;place-items:center;font-style:normal;font-size:15px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:7px 14px;border-radius:30px;border:1px solid var(--line);background:rgba(0,0,0,.35);transition:.2s}
+.pill:hover{border-color:var(--green)}
+h2{font-size:28px;font-weight:700}
+.sub{color:var(--mute);font-size:13px;margin-top:-10px}
+.feed{display:flex;flex-direction:column;gap:12px}
+.ev{display:flex;gap:14px;padding:12px;border-radius:16px;border:1px solid var(--line);background:rgba(0,0,0,.28);transition:.25s}
+.ev:hover{border-color:rgba(61,220,132,.5);transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.thumb{position:relative;flex-shrink:0;width:96px;aspect-ratio:4/3;border-radius:12px;overflow:hidden;background-size:cover;background-position:center}
+.ev.big .thumb{width:150px;aspect-ratio:3/4}
+.thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(0,0,0,.7))}
+.play{position:absolute;inset:0;margin:auto;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.85);color:#000;display:grid;place-items:center;font-size:12px;z-index:1}
+.views{position:absolute;bottom:6px;left:8px;font-size:10px;z-index:1}
+.body{flex:1;min-width:0;display:flex;flex-direction:column}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tag{font-size:11px;padding:2px 9px;border-radius:20px;border:1px solid}
+.t-ngo{color:var(--gold);border-color:#e8b84a55;background:#e8b84a14}
+.t-dau{color:var(--green);border-color:#3ddc8455;background:#3ddc8414}
+.t-mi{color:#e7a76b;border-color:#e7a76b55;background:#e7a76b14}
+.t-dvu{color:#7fc8ff;border-color:#7fc8ff55;background:#7fc8ff14}
+.imp{font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px}
+.up{color:var(--green)}.down{color:var(--red)}
+.imp.up{background:#3ddc8420}.imp.down{background:#ff6b6b20}
+.ev h3{font-size:16px;margin:6px 0 4px;line-height:1.3}
+.ev.big h3{font-size:20px}
+.ev ul{list-style:none;font-size:13px;color:#cfdcd4}
+.ev li::before{content:"• ";color:var(--mute)}
+.more{margin-top:auto;padding-top:6px;font-size:12.5px;color:var(--mute)}
+.ev:hover .more{color:var(--green)}
+/* CTA */
+.cta{display:grid;grid-template-columns:1fr 1.4fr;gap:12px}
+.cta-box{border-radius:16px;padding:16px;border:1px solid var(--line);background:rgba(0,0,0,.3)}
+.cta-box b{display:block;font-size:15px}.cta-box small{color:var(--mute);font-size:12px}
+.tt{background:linear-gradient(135deg,#111,#1c1c1c);display:flex;flex-direction:column;justify-content:space-between;gap:10px;transition:.2s}
+.tt:hover{border-color:#ff2d55}
+.tt .go{font-size:13px;font-weight:600;color:#ff4d6d}
+.mail{background:linear-gradient(135deg,rgba(31,107,66,.55),rgba(61,220,132,.18));border-color:rgba(61,220,132,.45);box-shadow:0 0 40px rgba(61,220,132,.15)}
+.mail form{display:flex;gap:6px;margin-top:10px}
+.mail input{flex:1;min-width:0;background:rgba(0,0,0,.45);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--txt);font:inherit;font-size:13px;outline:none}
+.mail input:focus{border-color:var(--green)}
+.mail button{background:var(--green);color:#04210f;border:0;border-radius:10px;padding:0 14px;font:inherit;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 0 18px rgba(61,220,132,.5)}
+/* RIGHT */
+.right{display:flex;flex-direction:column;gap:20px}
+.bento{display:grid;grid-template-columns:1.2fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:12px}
+.tile{border-radius:18px;padding:16px;border:1px solid var(--line);background:linear-gradient(160deg,rgba(30,55,40,.6),rgba(0,0,0,.35));display:flex;flex-direction:column;transition:.2s;min-height:150px}
+.tile:hover{border-color:rgba(61,220,132,.45)}
+.tile.hero{grid-row:span 2}
+.tile .nm{font-size:13px;color:#cfdcd4;display:flex;justify-content:space-between}
+.tile .px{font-size:26px;font-weight:700;margin:6px 0 2px}
+.tile.hero .px{font-size:34px}
+.tile .ch{font-size:12px;font-weight:700;display:inline-block;padding:2px 8px;border-radius:8px;width:max-content}
+.tile svg{margin-top:auto;width:100%;height:50px}
+.tile.hero svg{height:55%}
+.unit{font-size:11px;color:var(--mute)}
+.tile .nm{align-items:flex-start}
+.ttl{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+.ttl b{display:inline-block;font-size:1.1rem;font-weight:800;color:#fff;line-height:1.2;padding:5px 14px;border-radius:999px;border:1.5px solid rgba(232,184,74,.55);background:rgba(232,184,74,.1)}
+.tile.hero .ttl b{font-size:1.35rem;padding:6px 18px}
+.ttl em{font-style:normal;font-size:.72rem;color:var(--gold);letter-spacing:1px;padding-left:4px}
+.tf{font-size:.7rem;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,.08);color:#cfdcd4}
+.px small{font-size:.75rem;color:var(--mute);margin-left:6px;font-weight:500}
+.axis{display:flex;justify-content:space-between;font-size:.62rem;color:var(--mute);margin-top:4px}
+.tile:not(.hero) .axis span:nth-child(2){display:none}
+.bottom{display:grid;grid-template-columns:1fr 1.25fr;gap:20px}
+.panel h4{font-size:17px}.panel .cap{font-size:12px;color:var(--mute);margin-bottom:14px}
+.week .it{position:relative;padding:0 0 14px 18px;border-left:1px dashed var(--line);margin-left:4px}
+.week .it::before{content:"";position:absolute;left:-5px;top:4px;width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.week .it:last-child{padding-bottom:0}
+.week .d{font-size:11px;color:var(--gold)}
+.week .t{font-size:14px;font-weight:600}
+.week .tags{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+.cal{display:grid;grid-template-columns:76px repeat(12,1fr);gap:3px;font-size:11px;align-items:center}
+.cal .m{text-align:center;color:var(--mute);font-size:10px}
+.cal .c{height:22px;border-radius:4px;background:rgba(255,255,255,.04)}
+.cal .p{background:linear-gradient(#3ddc84,#23a862)}.cal .h{background:linear-gradient(#f2c862,#d49c2a)}
+.cal .now{outline:1.5px solid #fff;outline-offset:1px}
+.leg{display:flex;gap:14px;font-size:11px;color:var(--mute);margin-top:12px}
+.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.disc{font-size:11px;color:var(--mute);text-align:center;grid-column:1/-1;padding-top:4px}
+/* DESKTOP: full width, fill screen, balanced */
+@media(min-width:981px){
+ html{font-size:clamp(14px,0.95vw,18px)}
+ .app{max-width:none;width:100%;height:100vh;overflow:hidden;padding:clamp(14px,1.4vw,28px);gap:clamp(12px,1.2vw,22px);grid-template-columns:1fr 1.25fr;grid-template-rows:minmax(0,1fr);align-items:stretch}
+ .left{position:static;align-self:stretch;min-height:0;gap:clamp(8px,1.2vh,16px);padding:clamp(14px,1.4vw,24px)}
+ .feed{flex:1;min-height:0;gap:clamp(8px,1.2vh,14px)}
+ .ev{flex:1;min-height:0;padding:clamp(8px,1.2vh,14px);align-items:stretch}
+ .ev.big{flex:1.35}
+ .thumb,.ev.big .thumb{width:clamp(120px,10vw,190px);aspect-ratio:auto;height:auto;min-height:0}
+ .ev h3{font-size:1.1rem}.ev.big h3{font-size:1.4rem}
+ .ev ul{font-size:.92rem}.more{font-size:.88rem}
+ h2{font-size:1.8rem}.sub{margin-top:-6px}
+ .cta-box{padding:clamp(10px,1.4vh,16px)}
+ .right{gap:clamp(12px,1.2vw,22px);min-height:0;display:flex;flex-direction:column}
+ .bento{flex:1.1;min-height:0}
+ .tile{min-height:0;overflow:hidden}
+ .bottom{flex:1;min-height:0;gap:clamp(12px,1.2vw,22px)}
+ .bottom .panel{min-height:0;overflow:hidden;padding:clamp(14px,1.4vw,22px)}
+ .disc{flex:none;padding:0;font-size:.72rem}
+ .tile .px{font-size:2rem}.tile.hero .px{font-size:3rem}
+ .tile .nm{font-size:.95rem}.tile .ch{font-size:.85rem}
+ .tile svg{height:40%}.tile.hero svg{height:60%}
+ .bottom .panel{display:flex;flex-direction:column}
+ .week>#week{flex:1;display:flex;flex-direction:column;justify-content:space-between}
+ .week .t{font-size:1.05rem}
+ .cal{flex:1;min-height:0;grid-template-rows:auto;grid-auto-rows:minmax(0,1fr);font-size:.82rem}
+ .cal .c{height:100%;min-height:14px}
+ .leg{margin-top:8px}
+ .week .it{padding-bottom:0}
+ .panel h4{font-size:1.2rem}
+}
+/* MOBILE */
+@media(max-width:980px){
+ .app{grid-template-columns:1fr;padding:14px;gap:14px}
+ .left{position:static}
+ .right{display:contents}
+ .left{order:1}.bento{order:2}.bottom{order:3}.disc{order:4}
+ .bottom{grid-template-columns:1fr;gap:14px}
+ .bento{grid-template-columns:1fr 1fr;grid-template-rows:auto}
+ .tile.hero{grid-column:span 2;grid-row:auto;min-height:190px}
+ .tile.hero svg{height:70px}
+ .cta{grid-template-columns:1fr}
+ .ev.big .thumb{width:110px}
+ h2{font-size:24px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+ <!-- ============ LEFT ============ -->
+ <aside class="panel left">
+  <div class="topbar">
+   <div class="logo"><i>🌾</i>GRAINDESK</div>
+   <a class="pill" id="ttTop" target="_blank">♪ Follow TikTok</a>
+  </div>
+  <h2>Góc nhìn sự kiện</h2>
+  <p class="sub">Sự kiện nào đang dịch chuyển giá ngũ cốc – và tại sao.</p>
+  <div class="feed" id="feed"></div>
+
+  <div class="cta">
+   <a class="cta-box tt" id="ttBox" target="_blank">
+    <div><b>♪ Theo dõi TikTok</b><small>Phân tích ngắn mỗi ngày</small></div>
+    <span class="go">Follow ngay →</span>
+   </a>
+   <div class="cta-box mail">
+    <b>📩 Bản tin sáng thứ 2</b><small>Tổng hợp tuần + kịch bản giá. Miễn phí.</small>
+    <form id="mailForm" method="POST">
+     <input type="email" name="email" placeholder="Email của bạn" required>
+     <input type="hidden" name="_subject" value="Đăng ký bản tin GrainDesk">
+     <input type="hidden" name="_captcha" value="false">
+     <button type="submit">Đăng ký</button>
+    </form>
+   </div>
+  </div>
+ </aside>
+
+ <!-- ============ RIGHT ============ -->
+ <main class="right">
+  <section class="bento" id="bento"></section>
+  <section class="bottom">
+   <div class="panel week"><h4>Sự kiện tuần này</h4><p class="cap">Lịch báo cáo ảnh hưởng thị trường</p><div id="week"></div></div>
+   <div class="panel"><h4>Lịch mùa vụ</h4><p class="cap">Mùa gieo trồng & thu hoạch chính</p><div class="cal" id="cal"></div>
+    <div class="leg"><span><i style="background:#3ddc84"></i>Gieo trồng</span><span><i style="background:#e8b84a"></i>Thu hoạch</span><span><i style="outline:1.5px solid #fff"></i>Tháng hiện tại</span></div></div>
+  </section>
+  <p class="disc">Thông tin mang tính góc nhìn cá nhân, không phải khuyến nghị đầu tư. Giao dịch phái sinh hàng hóa có rủi ro cao.</p>
+ </main>
+</div>
+
+<script>
+/* ================================================================
+   📝 CHỈ CẦN SỬA PHẦN DỮ LIỆU DƯỚI ĐÂY
+   ================================================================ */
+const TIKTOK = "https://www.tiktok.com/@ten_kenh_cua_ban";
+const EMAIL_NHAN = "email_cua_ban@gmail.com";   // email nhận danh sách đăng ký (FormSubmit – miễn phí)
+const SHEET_ID = ""; // Dán ID Google Sheets vào đây để tự động cập nhật tin sự kiện & lịch tuần
+
+// Góc nhìn sự kiện – thẻ đầu tiên tự động là thẻ nổi bật
+// tag: ngo | dau | mi | dvu (dầu/khô đậu) ; impact: up | down
+const EVENTS = [
+ {tag:"dau",tagName:"Đậu tương",impact:"up",title:"Báo cáo WASDE tháng 11",points:["Sản lượng Mỹ điều chỉnh giảm 1.2%","Tồn kho toàn cầu thắt chặt"],
+  video:"https://www.tiktok.com/@ten_kenh_cua_ban/video/1",img:"https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=400",views:"24.5K"},
+ {tag:"ngo",tagName:"Ngô",impact:"up",title:"Trung Quốc tăng mua nông sản Mỹ",points:["Đơn hàng tuần vượt 1.5 triệu tấn","Nhu cầu nhập khẩu tăng mạnh"],
+  video:"https://www.tiktok.com/@ten_kenh_cua_ban/video/2",img:"https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",views:"18.2K"},
+ {tag:"mi",tagName:"Lúa mì",impact:"down",title:"Nga nâng dự báo xuất khẩu",points:["Nguồn cung Biển Đen dồi dào","Áp lực cạnh tranh giá lên CBOT"],
+  video:"https://www.tiktok.com/@ten_kenh_cua_ban/video/3",img:"https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400",views:"12.9K"},
+];
+
+// Ô giá: data = chuỗi giá gần đây để vẽ biểu đồ
+const PRICES = [
+ {name:"Ngô",code:"ZC",price:"446.00",unit:"¢/giạ",ch:+0.79,intraday:[446.5,446.75,446.5,447,447.5,447.75,446.25,446.5,447.5,448,447.25,446,449.75,448,446.5,446,445.5,445.75,446]},
+ {name:"Lúa mì",code:"ZW",price:"593.50",unit:"¢/giạ",ch:+1.58,intraday:[591,591.5,592.5,593.75,594.5,595.25,594,595.5,594.5,595.75,594.75,590.75,595.75,598.5,597,595,594,593,591.5,593.5]},
+ {name:"Đậu tương",code:"ZS",price:"1232.75",unit:"¢/giạ",ch:+1.13,intraday:[1229.5,1231,1230.25,1232,1233,1233.75,1234.75,1236.75,1235.75,1232,1239.5,1240.25,1234.25,1232.25,1230.25,1232.5,1233.5,1231.25,1232.75]},
+ {name:"Dầu đậu tương",code:"ZL",price:"63.73",unit:"¢/pound",ch:+0.49,intraday:[63.63,63.67,63.7,63.85,63.95,63.91,63.96,64.13,64.05,63.85,64.07,63.78,63.97,63.79,63.7,63.74,63.79,63.73]},
+ {name:"Khô đậu tương",code:"ZM",price:"330.20",unit:"$/tấn thiếu",ch:+1.48,intraday:[326,326.4,326,326.6,328.6,328.8,329.3,329.6,328.3,328,331.6,330.5,329,329.8,329.7,329.9,330.2]},
+];
+
+const WEEK = [
+ {d:"Thứ 2 · 22:00",t:"USDA Crop Progress",tags:["ngo","dau"]},
+ {d:"Thứ 4 · 21:30",t:"EIA Ethanol",tags:["ngo"]},
+ {d:"Thứ 5 · 19:30",t:"Export Sales",tags:["ngo","dau","mi"]},
+ {d:"Thứ 6 · 02:30",t:"COT Report (CFTC)",tags:["ngo","dau","mi","dvu"]},
+];
+
+// p = gieo trồng, h = thu hoạch, . = trống (12 ký tự cho T1→T12)
+const SEASON = [
+ ["Ngô Mỹ","...pp...hhh."],["Đậu tương Mỹ","....pp..hhh."],["Lúa mì Mỹ","hh...hh.pp.."],
+ ["Đậu Brazil","hhh......ppp"],["Ngô Brazil","pp...hhh...."],["Đậu Argentina","...hh.....pp"]];
+/* ================================================================ */
+
+const TAGN={ngo:"Ngô",dau:"Đậu tương",mi:"Lúa mì",dvu:"Dầu/Khô đậu"};
+document.getElementById("ttTop").href=document.getElementById("ttBox").href=TIKTOK;
+document.getElementById("mailForm").action="https://formsubmit.co/"+EMAIL_NHAN;
+
+function renderEvents(list){
+ document.getElementById("feed").innerHTML=list.map((e,i)=>`
+  <a class="ev ${i==0?'big':''}" href="${e.video}" target="_blank">
+   <div class="thumb" style="background-image:url('${e.img}')"><span class="play">▶</span><span class="views mono">${e.views} views</span></div>
+   <div class="body">
+    <div class="row"><span class="tag t-${e.tag}">${e.tagName||TAGN[e.tag]||e.tag}</span><span class="imp ${e.impact}">${e.impact=='up'?'TĂNG ▲':'GIẢM ▼'}</span></div>
+    <h3>${e.title}</h3><ul>${e.points.filter(Boolean).map(p=>`<li>${p}</li>`).join("")}</ul>
+    <span class="more">Xem phân tích trên TikTok →</span>
+   </div></a>`).join("");
+}
+
+function spark(d,up,id){const w=200,h=60,mn=Math.min(...d),mx=Math.max(...d);
+ const pts=d.map((v,i)=>[i*w/(d.length-1),h-4-(v-mn)/(mx-mn||1)*(h-8)]);
+ const line=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+ const c=up?'#3ddc84':'#ff6b6b';
+ return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><defs><linearGradient id="g${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".35"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient></defs>
+ <path d="${line} L${w} ${h} L0 ${h}Z" fill="url(#g${id})"/><path d="${line}" fill="none" stroke="${c}" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`}
+
+function demo1D(p){const end=parseFloat(p.price),start=end/(1+p.ch/100),n=48,a=[];
+ for(let i=0;i<n;i++){const t=i/(n-1);a.push(start+(end-start)*t+Math.sin(i*1.7+end)*Math.abs(end-start)*0.35*(1-t*0.6))}return a}
+
+function renderPrices(list){
+ const hero=list.reduce((a,b,i)=>Math.abs(b.ch)>Math.abs(list[a].ch)?i:a,0);
+ document.getElementById("bento").innerHTML=[list[hero],...list.filter((_,i)=>i!=hero)].map((p,i)=>{const up=p.ch>=0;
+  const d=(p.intraday&&p.intraday.length>1)?p.intraday:demo1D(p);
+  return `<div class="tile ${i==0?'hero':''}">
+   <div class="nm"><span class="ttl"><b>${p.name}</b><em class="mono">${p.code} · CBOT</em></span><span class="tf mono">1D</span></div>
+   <div class="px mono">${p.price}<small>${p.unit}</small></div>
+   <span class="ch mono ${up?'up':'down'}" style="background:${up?'#3ddc8420':'#ff6b6b20'}">${up?'▲ +':'▼ '}${Number(p.ch).toFixed(2)}%</span>
+   ${spark(d,up,i)}
+   <div class="axis mono"><span>08:00</span><span>Mở cửa phiên CBOT</span><span>Hiện tại</span></div></div>`}).join("");
+}
+
+function renderWeek(list){
+ document.getElementById("week").innerHTML=list.map(w=>`<div class="it"><div class="d mono">${w.d}</div><div class="t">${w.t}</div>
+  <div class="tags">${w.tags.map(t=>`<span class="tag t-${t}">${TAGN[t]||t}</span>`).join("")}</div></div>`).join("");
+}
+
+// Khởi tạo bằng dữ liệu mặc định, sau đó tự tải dữ liệu live nếu có
+renderEvents(EVENTS);renderPrices(PRICES);renderWeek(WEEK);
+
+// 1) Tự động nạp giá từ prices.json (do GitHub Actions cập nhật)
+fetch("prices.json?t="+Date.now()).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.prices&&j.prices.length)renderPrices(j.prices)}).catch(()=>{});
+
+// 2) Tự động nạp Góc nhìn sự kiện & Sự kiện tuần từ Google Sheets
+function loadSheet(tab,cb){
+ if(!SHEET_ID)return;
+ fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}`)
+  .then(r=>r.text()).then(t=>{
+   const rows=JSON.parse(t.slice(t.indexOf('{'),t.lastIndexOf('}')+1)).table.rows;
+   cb(rows.map(r=>(r.c||[]).map(c=>c&&c.v!=null?String(c.v).trim():"")));
+  }).catch(()=>{});
+}
+loadSheet("events",rows=>{
+ const list=rows.filter(r=>r[2]&&r[0]!="tag").map(r=>({tag:r[0]||"ngo",tagName:TAGN[r[0]]||r[0],impact:(r[1]||"up").toLowerCase(),title:r[2],points:[r[3],r[4]],video:r[5]||"#",img:r[6],views:r[7]||""}));
+ if(list.length)renderEvents(list);
+});
+loadSheet("week",rows=>{
+ const list=rows.filter(r=>r[1]&&r[0]!="time").map(r=>({d:r[0],t:r[1],tags:(r[2]||"").split(",").map(s=>s.trim()).filter(Boolean)}));
+ if(list.length)renderWeek(list);
+});
+
+const now=new Date().getMonth();
+let s='<span></span>'+[...Array(12)].map((_,i)=>`<span class="m">T${i+1}</span>`).join("");
+SEASON.forEach(([n,r])=>{s+=`<span>${n}</span>`+[...r].map((c,i)=>`<span class="c ${c=='p'?'p':c=='h'?'h':''} ${i==now?'now':''}"></span>`).join("")});
+document.getElementById("cal").innerHTML=s;
+</script>
+</body>
+</html>
