@@ -178,7 +178,7 @@ h2{font-size:28px;font-weight:700}
  <main class="right">
   <section class="bento" id="bento"></section>
   <section class="bottom">
-   <div class="panel week"><h4>Sự kiện tuần này</h4><p class="cap">Lịch báo cáo ảnh hưởng thị trường</p><div id="week"></div></div>
+   <div class="panel week"><h4>Sự kiện sắp tới</h4><p class="cap">Tự động cập nhật theo giờ Việt Nam</p><div id="week"></div></div>
    <div class="panel"><h4>Lịch mùa vụ</h4><p class="cap">Mùa gieo trồng & thu hoạch chính</p><div class="cal" id="cal"></div>
     <div class="leg"><span><i style="background:#3ddc84"></i>Gieo trồng</span><span><i style="background:#e8b84a"></i>Thu hoạch</span><span><i style="outline:1.5px solid #fff"></i>Tháng hiện tại</span></div></div>
   </section>
@@ -190,7 +190,7 @@ h2{font-size:28px;font-weight:700}
 /* ================================================================
    📝 CHỈ CẦN SỬA PHẦN DỮ LIỆU DƯỚI ĐÂY
    ================================================================ */
-const TIKTOK = "https://www.tiktok.com/@ten_kenh_cua_ban";
+const TIKTOK = "https://www.tiktok.com/@wayturtles";
 const EMAIL_NHAN = "email_cua_ban@gmail.com";   // email nhận danh sách đăng ký (FormSubmit – miễn phí)
 const SHEET_ID = ""; // Dán ID Google Sheets vào đây để tự động cập nhật tin sự kiện & lịch tuần
 
@@ -198,11 +198,11 @@ const SHEET_ID = ""; // Dán ID Google Sheets vào đây để tự động cậ
 // tag: ngo | dau | mi | dvu (dầu/khô đậu) ; impact: up | down
 const EVENTS = [
  {tag:"dau",tagName:"Đậu tương",impact:"up",title:"Báo cáo WASDE tháng 11",points:["Sản lượng Mỹ điều chỉnh giảm 1.2%","Tồn kho toàn cầu thắt chặt"],
-  video:"https://www.tiktok.com/@ten_kenh_cua_ban/video/1",img:"https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=400",views:"24.5K"},
+  video:"https://www.tiktok.com/@wayturtles",img:"https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=400",views:"Mới"},
  {tag:"ngo",tagName:"Ngô",impact:"up",title:"Trung Quốc tăng mua nông sản Mỹ",points:["Đơn hàng tuần vượt 1.5 triệu tấn","Nhu cầu nhập khẩu tăng mạnh"],
-  video:"https://www.tiktok.com/@ten_kenh_cua_ban/video/2",img:"https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",views:"18.2K"},
+  video:"https://www.tiktok.com/@wayturtles",img:"https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",views:"Mới"},
  {tag:"mi",tagName:"Lúa mì",impact:"down",title:"Nga nâng dự báo xuất khẩu",points:["Nguồn cung Biển Đen dồi dào","Áp lực cạnh tranh giá lên CBOT"],
-  video:"https://www.tiktok.com/@ten_kenh_cua_ban/video/3",img:"https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400",views:"12.9K"},
+  video:"https://www.tiktok.com/@wayturtles",img:"https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400",views:"Mới"},
 ];
 
 // Ô giá: data = chuỗi giá gần đây để vẽ biểu đồ
@@ -234,7 +234,7 @@ document.getElementById("mailForm").action="https://formsubmit.co/"+EMAIL_NHAN;
 function renderEvents(list){
  document.getElementById("feed").innerHTML=list.map((e,i)=>`
   <a class="ev ${i==0?'big':''}" href="${e.video}" target="_blank">
-   <div class="thumb" style="background-image:url('${e.img}')"><span class="play">▶</span><span class="views mono">${e.views} views</span></div>
+   <div class="thumb" style="background-image:url('${e.img}')"><span class="play">▶</span><span class="views mono">${e.views}</span></div>
    <div class="body">
     <div class="row"><span class="tag t-${e.tag}">${e.tagName||TAGN[e.tag]||e.tag}</span><span class="imp ${e.impact}">${e.impact=='up'?'TĂNG ▲':'GIẢM ▼'}</span></div>
     <h3>${e.title}</h3><ul>${e.points.filter(Boolean).map(p=>`<li>${p}</li>`).join("")}</ul>
@@ -264,13 +264,56 @@ function renderPrices(list){
    <div class="axis mono"><span>08:00</span><span>Mở cửa phiên CBOT</span><span>Hiện tại</span></div></div>`}).join("");
 }
 
+function autoUpcomingEvents(now=new Date()){
+ // Tạo lịch báo cáo chuẩn của USDA / EIA / CFTC / NOPA theo giờ Việt Nam (UTC+7)
+ // Quy tắc giờ chuẩn (Standard Time tháng 11–tháng 3):
+ // - USDA Export Inspections: Thứ 2 hàng tuần · 23:00
+ // - USDA Crop Progress: Thứ 3 hàng tuần · 04:00 (tức 16:00 ET Thứ 2)
+ // - EIA Ethanol Production: Thứ 4 hàng tuần · 22:30 (10:30 ET)
+ // - USDA Weekly Export Sales: Thứ 5 hàng tuần · 20:30 (08:30 ET)
+ // - CFTC COT Report: Thứ 7 hàng tuần · 03:30 (15:30 ET Thứ 6)
+ // - NOPA Crush Report: Ngày 15 hàng tháng · 23:00
+ // - USDA WASDE Report: Khoảng ngày 10–12 hàng tháng · 23:00
+ const rules=[
+  {type:"w",dow:1,h:23,m:0,t:"USDA Export Inspections (Giao hàng xuất khẩu)",tags:["ngo","dau","mi"]},
+  {type:"w",dow:2,h:4,m:0,t:"USDA Crop Progress (Tiến độ mùa vụ Mỹ)",tags:["ngo","dau","mi"]},
+  {type:"w",dow:3,h:22,m:30,t:"EIA Ethanol Report (Sản lượng & tồn kho Ethanol)",tags:["ngo","dvu"]},
+  {type:"w",dow:4,h:20,m:30,t:"USDA Weekly Export Sales (Doanh số xuất khẩu)",tags:["ngo","dau","mi","dvu"]},
+  {type:"w",dow:6,h:3,m:30,t:"CFTC COT Report (Vị thế quỹ đầu cơ Managed Money)",tags:["ngo","dau","mi","dvu"]},
+  {type:"m",dom:10,h:23,m:0,t:"Báo cáo Cung – Cầu Thế giới USDA WASDE",tags:["ngo","dau","mi","dvu"]},
+  {type:"m",dom:15,h:23,m:0,t:"NOPA Crush Report (Sản lượng ép dầu đậu tương Mỹ)",tags:["dau","dvu"]},
+ ];
+ const list=[];
+ for(let i=0;i<=35;i++){
+  const d=new Date(now.getTime()+i*86400000);
+  const dow=d.getDay(),dom=d.getDate();
+  for(const r of rules){
+   if((r.type=="w"&&dow==r.dow)||(r.type=="m"&&dom==r.dom)){
+    const evTime=new Date(d.getFullYear(),d.getMonth(),d.getDate(),r.h,r.m,0);
+    if(evTime>now)list.push({dt:evTime,t:r.t,tags:r.tags});
+   }
+  }
+ }
+ list.sort((a,b)=>a.dt-b.dt);
+ const thu=["Chủ Nhật","Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7"];
+ const pad=n=>String(n).padStart(2,"0");
+ return list.slice(0,4).map(x=>{
+  const dt=x.dt;
+  const diffH=Math.max(1,Math.round((dt-now)/3600000));
+  const cd=diffH<24?`còn ${diffH} giờ`:`còn ${Math.ceil(diffH/24)} ngày`;
+  const dStr=`${thu[dt.getDay()]} · ${pad(dt.getDate())}/${pad(dt.getMonth()+1)}/${dt.getFullYear()} · ${pad(dt.getHours())}:${pad(dt.getMinutes())} (${cd})`;
+  return {d:dStr,t:x.t,tags:x.tags};
+ });
+}
+
 function renderWeek(list){
  document.getElementById("week").innerHTML=list.map(w=>`<div class="it"><div class="d mono">${w.d}</div><div class="t">${w.t}</div>
   <div class="tags">${w.tags.map(t=>`<span class="tag t-${t}">${TAGN[t]||t}</span>`).join("")}</div></div>`).join("");
 }
 
-// Khởi tạo bằng dữ liệu mặc định, sau đó tự tải dữ liệu live nếu có
-renderEvents(EVENTS);renderPrices(PRICES);renderWeek(WEEK);
+// Khởi tạo bằng dữ liệu tự động thời gian thực
+renderEvents(EVENTS);renderPrices(PRICES);renderWeek(autoUpcomingEvents());
+setInterval(()=>renderWeek(autoUpcomingEvents()),60000);
 
 // 1) Tự động nạp giá từ prices.json (do GitHub Actions cập nhật)
 fetch("prices.json?t="+Date.now()).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.prices&&j.prices.length)renderPrices(j.prices)}).catch(()=>{});
