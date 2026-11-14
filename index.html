@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GrainDesk – Góc nhìn thị trường ngũ cốc</title>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Chakra+Petch:wght@700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#07100b;--glass:rgba(22,40,30,.55);--line:rgba(120,200,150,.14);--green:#3ddc84;--red:#ff6b6b;--gold:#e8b84a;--txt:#eef5f0;--mute:#8fa89a}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -17,8 +17,15 @@ a{color:inherit;text-decoration:none}
 /* LEFT */
 .left{display:flex;flex-direction:column;gap:16px;position:sticky;top:24px;align-self:start}
 .topbar{display:flex;justify-content:space-between;align-items:center}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:1.5px}
-.logo i{width:30px;height:30px;border-radius:50%;background:conic-gradient(var(--green),var(--gold),var(--green));display:grid;place-items:center;font-style:normal;font-size:15px}
+.logo{display:inline-flex;align-items:center;gap:12px;padding:6px 16px 6px 8px;border-radius:16px;background:linear-gradient(135deg,rgba(61,220,132,.14),rgba(232,184,74,.1),rgba(255,107,107,.12));border:1px solid rgba(232,184,74,.45);box-shadow:0 0 24px rgba(61,220,132,.18),inset 0 0 12px rgba(232,184,74,.1)}
+.logo .bb{display:flex;align-items:center;gap:2px;padding:4px 8px;border-radius:11px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.12);font-size:16px;line-height:1;box-shadow:inset 0 0 10px rgba(0,0,0,.6)}
+.logo .bb .bull{filter:drop-shadow(0 0 6px #3ddc84)}
+.logo .bb .vs{font-size:10px;color:var(--gold);font-weight:800;margin:0 1px}
+.logo .bb .bear{filter:drop-shadow(0 0 6px #ff6b6b)}
+.logo .brand{font-family:'Chakra Petch',sans-serif;font-size:1.35rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;background:linear-gradient(90deg,#fff 0%,var(--gold) 52%,var(--green) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 22px rgba(232,184,74,.25)}
+.ev-time{font-size:10.5px;color:var(--gold);margin-top:2px}
+.vlink{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;padding:2px 8px;border-radius:999px;border:1px solid rgba(61,220,132,.5);background:rgba(61,220,132,.15);color:var(--green);font-weight:600}
+.vlink.wait{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:var(--mute);font-weight:400}
 .pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:7px 14px;border-radius:30px;border:1px solid var(--line);background:rgba(0,0,0,.35);transition:.2s}
 .pill:hover{border-color:var(--green)}
 h2{font-size:28px;font-weight:700}
@@ -153,7 +160,7 @@ h2{font-size:28px;font-weight:700}
  <!-- ============ LEFT ============ -->
  <aside class="panel left">
   <div class="topbar">
-   <div class="logo"><i>🌾</i>GRAINDESK</div>
+   <div class="logo"><span class="bb" title="Bull vs Bear"><span class="bull">🐂</span><span class="vs">⚡</span><span class="bear">🐻</span></span><span class="brand">GRAINDESK</span></div>
    <a class="pill" id="ttTop" target="_blank">♪ Follow TikTok</a>
   </div>
   <h2>Góc nhìn sự kiện</h2>
@@ -197,16 +204,25 @@ const TIKTOK = "https://www.tiktok.com/@wayturtles";
 const EMAIL_NHAN = "email_cua_ban@gmail.com";   // email nhận danh sách đăng ký (FormSubmit – miễn phí)
 const SHEET_ID = ""; // Dán ID Google Sheets vào đây để tự động cập nhật tin sự kiện & lịch tuần
 
-// Góc nhìn sự kiện – thẻ đầu tiên tự động là thẻ nổi bật
-// tag: ngo | dau | mi | dvu (dầu/khô đậu) ; impact: up | down
-const EVENTS = [
- {tag:"dau",tagName:"Đậu tương",impact:"up",title:"Báo cáo WASDE tháng 11",points:["Sản lượng Mỹ điều chỉnh giảm 1.2%","Tồn kho toàn cầu thắt chặt"],
-  video:"https://www.tiktok.com/@wayturtles",img:"https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=400",views:"Mới"},
- {tag:"ngo",tagName:"Ngô",impact:"up",title:"Trung Quốc tăng mua nông sản Mỹ",points:["Đơn hàng tuần vượt 1.5 triệu tấn","Nhu cầu nhập khẩu tăng mạnh"],
-  video:"https://www.tiktok.com/@wayturtles",img:"https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",views:"Mới"},
- {tag:"mi",tagName:"Lúa mì",impact:"down",title:"Nga nâng dự báo xuất khẩu",points:["Nguồn cung Biển Đen dồi dào","Áp lực cạnh tranh giá lên CBOT"],
-  video:"https://www.tiktok.com/@wayturtles",img:"https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400",views:"Mới"},
-];
+// Cơ chế nối "Sự kiện sắp tới" <-> "Góc nhìn sự kiện"
+// Chỉ cần dán link video TikTok ứng với mã sự kiện (NOPA, INSPECT, CROP, EIA, EXPORT, COT, WASDE)
+// Hệ thống tự lấy ảnh bìa TikTok (oEmbed) và tự đồng bộ cả 2 cột!
+const EVENT_VIDEOS = {
+ NOPA:    {impact:"up",   video:"https://www.tiktok.com/@wayturtles", points:["Ép dầu đậu tương Mỹ dự kiến duy trì mức cao","Hỗ trợ nhu cầu khô & dầu đậu tương CBOT"]},
+ INSPECT: {impact:"up",   video:"https://www.tiktok.com/@wayturtles", points:["Giao hàng xuất khẩu đậu tương & ngô Mỹ khả quan","Đơn hàng từ Trung Quốc giữ nhịp ổn định"]},
+ CROP:    {impact:"down", video:"https://www.tiktok.com/@wayturtles", points:["Thu hoạch vụ mùa Mỹ hoàn tất nhanh","Nguồn cung ngắn hạn dồi dào gây áp lực giá"]},
+ EIA:     {impact:"up",   video:"", points:["Sản lượng Ethanol duy trì cao hỗ trợ nhu cầu Ngô","Theo dõi biến động tồn kho nhiên liệu sinh học"]},
+ EXPORT:  {impact:"up",   video:"", points:["Doanh số xuất khẩu tuần của USDA cho Ngô, Đậu, Lúa mì","Tâm điểm sức mua từ Trung Quốc & Mexico"]},
+ COT:     {impact:"down", video:"", points:["Vị thế ròng của các quỹ đầu cơ Managed Money","Quan sát dòng tiền chốt lời cuối tuần"]},
+ WASDE:   {impact:"up",   video:"", points:["Báo cáo Cung – Cầu Thế giới quan trọng nhất tháng","Tác động mạnh biên độ cả 5 mặt hàng CBOT"]},
+};
+
+const FALLBACK_IMG={
+ dau:"https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=400",
+ ngo:"https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",
+ mi:"https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400",
+ dvu:"https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400"
+};
 
 // Ô giá: data = chuỗi giá gần đây để vẽ biểu đồ
 const PRICES = [
@@ -234,15 +250,33 @@ const TAGN={ngo:"Ngô",dau:"Đậu tương",mi:"Lúa mì",dvu:"Dầu/Khô đậu
 document.getElementById("ttTop").href=document.getElementById("ttBox").href=TIKTOK;
 document.getElementById("mailForm").action="https://formsubmit.co/"+EMAIL_NHAN;
 
+const OEMBED_CACHE={};
+function enrichTikTok(url,cb){
+ if(!url||!url.includes("/video/")||OEMBED_CACHE[url]){if(OEMBED_CACHE[url])cb(OEMBED_CACHE[url]);return;}
+ fetch("https://www.tiktok.com/oembed?url="+encodeURIComponent(url)).then(r=>r.ok?r.json():null).then(j=>{
+  if(j){OEMBED_CACHE[url]=j;cb(j)}
+ }).catch(()=>{});
+}
+
 function renderEvents(list){
  document.getElementById("feed").innerHTML=list.map((e,i)=>`
-  <a class="ev ${i==0?'big':''}" href="${e.video}" target="_blank">
-   <div class="thumb" style="background-image:url('${e.img}')"><span class="play">▶</span><span class="views mono">${e.views}</span></div>
+  <a class="ev ${i==0?'big':''}" id="evcard-${e.key||i}" href="${e.video||TIKTOK}" target="_blank">
+   <div class="thumb" id="thumb-${e.key||i}" style="background-image:url('${e.img}')"><span class="play">▶</span><span class="views mono">${e.views}</span></div>
    <div class="body">
-    <div class="row"><span class="tag t-${e.tag}">${e.tagName||TAGN[e.tag]||e.tag}</span><span class="imp ${e.impact}">${e.impact=='up'?'TĂNG ▲':'GIẢM ▼'}</span></div>
+    <div class="row"><span class="tag t-${e.tag}">${e.tagName||TAGN[e.tag]||e.tag}</span><span class="imp ${e.impact}">${e.impact=='up'?'🐂 BULL · TĂNG ▲':'🐻 BEAR · GIẢM ▼'}</span></div>
+    ${e.timeStr?`<div class="ev-time mono">⏰ ${e.timeStr}</div>`:''}
     <h3>${e.title}</h3><ul>${e.points.filter(Boolean).map(p=>`<li>${p}</li>`).join("")}</ul>
-    <span class="more">Xem phân tích trên TikTok →</span>
+    <span class="more">${e.hasVideo?'▶ Xem video góc nhìn trên TikTok →':'⏳ Xem kênh TikTok @wayturtles →'}</span>
    </div></a>`).join("");
+ // Tự động lấy ảnh bìa thật từ link video TikTok nếu có
+ list.forEach((e,i)=>{
+  if(e.video&&e.video.includes("/video/")){
+   enrichTikTok(e.video,meta=>{
+    const el=document.getElementById("thumb-"+(e.key||i));
+    if(el&&meta.thumbnail_url)el.style.backgroundImage=`url('${meta.thumbnail_url}')`;
+   });
+  }
+ });
 }
 
 function spark(d,up,id){const w=200,h=60,mn=Math.min(...d),mx=Math.max(...d);
@@ -278,13 +312,13 @@ function autoUpcomingEvents(now=new Date()){
  // - NOPA Crush Report: Ngày 15 hàng tháng · 23:00
  // - USDA WASDE Report: Khoảng ngày 10–12 hàng tháng · 23:00
  const rules=[
-  {type:"w",dow:1,h:23,m:0,t:"USDA Export Inspections (Giao hàng xuất khẩu)",tags:["ngo","dau","mi"]},
-  {type:"w",dow:2,h:4,m:0,t:"USDA Crop Progress (Tiến độ mùa vụ Mỹ)",tags:["ngo","dau","mi"]},
-  {type:"w",dow:3,h:22,m:30,t:"EIA Ethanol Report (Sản lượng & tồn kho Ethanol)",tags:["ngo","dvu"]},
-  {type:"w",dow:4,h:20,m:30,t:"USDA Weekly Export Sales (Doanh số xuất khẩu)",tags:["ngo","dau","mi","dvu"]},
-  {type:"w",dow:6,h:3,m:30,t:"CFTC COT Report (Vị thế quỹ đầu cơ Managed Money)",tags:["ngo","dau","mi","dvu"]},
-  {type:"m",dom:10,h:23,m:0,t:"Báo cáo Cung – Cầu Thế giới USDA WASDE",tags:["ngo","dau","mi","dvu"]},
-  {type:"m",dom:15,h:23,m:0,t:"NOPA Crush Report (Sản lượng ép dầu đậu tương Mỹ)",tags:["dau","dvu"]},
+  {key:"INSPECT",type:"w",dow:1,h:23,m:0,t:"USDA Export Inspections (Giao hàng xuất khẩu)",tags:["ngo","dau","mi"]},
+  {key:"CROP",type:"w",dow:2,h:4,m:0,t:"USDA Crop Progress (Tiến độ mùa vụ Mỹ)",tags:["ngo","dau","mi"]},
+  {key:"EIA",type:"w",dow:3,h:22,m:30,t:"EIA Ethanol Report (Sản lượng & tồn kho Ethanol)",tags:["ngo","dvu"]},
+  {key:"EXPORT",type:"w",dow:4,h:20,m:30,t:"USDA Weekly Export Sales (Doanh số xuất khẩu)",tags:["ngo","dau","mi","dvu"]},
+  {key:"COT",type:"w",dow:6,h:3,m:30,t:"CFTC COT Report (Vị thế quỹ đầu cơ Managed Money)",tags:["ngo","dau","mi","dvu"]},
+  {key:"WASDE",type:"m",dom:10,h:23,m:0,t:"Báo cáo Cung – Cầu Thế giới USDA WASDE",tags:["ngo","dau","mi","dvu"]},
+  {key:"NOPA",type:"m",dom:15,h:23,m:0,t:"NOPA Crush Report (Sản lượng ép dầu đậu tương Mỹ)",tags:["dau","dvu"]},
  ];
  const list=[];
  for(let i=0;i<=35;i++){
@@ -293,7 +327,7 @@ function autoUpcomingEvents(now=new Date()){
   for(const r of rules){
    if((r.type=="w"&&dow==r.dow)||(r.type=="m"&&dom==r.dom)){
     const evTime=new Date(d.getFullYear(),d.getMonth(),d.getDate(),r.h,r.m,0);
-    if(evTime>now)list.push({dt:evTime,t:r.t,tags:r.tags});
+    if(evTime>now)list.push({key:r.key,dt:evTime,t:r.t,tags:r.tags});
    }
   }
  }
@@ -305,18 +339,53 @@ function autoUpcomingEvents(now=new Date()){
   const diffH=Math.max(1,Math.round((dt-now)/3600000));
   const cd=diffH<24?`còn ${diffH} giờ`:`còn ${Math.ceil(diffH/24)} ngày`;
   const dStr=`${thu[dt.getDay()]} · ${pad(dt.getDate())}/${pad(dt.getMonth()+1)}/${dt.getFullYear()} · ${pad(dt.getHours())}:${pad(dt.getMinutes())} (${cd})`;
-  return {d:dStr,t:x.t,tags:x.tags};
+  return {key:x.key,d:dStr,cd,t:x.t,tags:x.tags};
+ });
+}
+
+function buildLinkedFeed(upcoming){
+ // Nối 3 sự kiện sắp tới gần nhất sang cột "Góc nhìn sự kiện"
+ return upcoming.slice(0,3).map(u=>{
+  const cfg=EVENT_VIDEOS[u.key]||{};
+  const mainTag=u.tags[0]||"ngo";
+  const hasVideo=Boolean(cfg.video);
+  return {
+   key:u.key,
+   tag:mainTag,
+   tagName:u.tags.map(t=>TAGN[t]||t).join(" · "),
+   impact:cfg.impact||"up",
+   title:cfg.title||u.t,
+   timeStr:u.d,
+   points:cfg.points||["Theo dõi phản ứng giá trước & sau giờ công bố báo cáo"],
+   video:cfg.video||TIKTOK,
+   hasVideo,
+   img:cfg.img||FALLBACK_IMG[mainTag],
+   views:hasVideo?"🎬 Video góc nhìn":"⏳ Sắp lên sóng"
+  };
  });
 }
 
 function renderWeek(list){
- document.getElementById("week").innerHTML=list.map(w=>`<div class="it"><div class="d mono">${w.d}</div><div class="t">${w.t}</div>
-  <div class="tags">${w.tags.map(t=>`<span class="tag t-${t}">${TAGN[t]||t}</span>`).join("")}</div></div>`).join("");
+ document.getElementById("week").innerHTML=list.map(w=>{
+  const cfg=EVENT_VIDEOS[w.key]||{};
+  const hasV=Boolean(cfg.video);
+  const badge=hasV
+   ?`<a class="vlink" href="${cfg.video}" target="_blank">▶ Xem video góc nhìn</a>`
+   :`<a class="vlink wait" href="${TIKTOK}" target="_blank">⏳ Sắp có video</a>`;
+  return `<div class="it"><div class="d mono">${w.d}</div><div class="t">${w.t}</div>
+   <div class="tags">${w.tags.map(t=>`<span class="tag t-${t}">${TAGN[t]||t}</span>`).join("")}${badge}</div></div>`;
+ }).join("");
 }
 
-// Khởi tạo bằng dữ liệu tự động thời gian thực
-renderEvents(EVENTS);renderPrices(PRICES);renderWeek(autoUpcomingEvents());
-setInterval(()=>renderWeek(autoUpcomingEvents()),60000);
+function syncAll(){
+ const up=autoUpcomingEvents();
+ renderWeek(up);
+ renderEvents(buildLinkedFeed(up));
+}
+
+// Khởi tạo bằng dữ liệu tự động thời gian thực (tự đồng bộ 2 cột)
+renderPrices(PRICES);syncAll();
+setInterval(syncAll,60000);
 
 // 1) Tự động nạp giá từ prices.json (do GitHub Actions cập nhật)
 fetch("prices.json?t="+Date.now()).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.prices&&j.prices.length)renderPrices(j.prices)}).catch(()=>{});
@@ -331,12 +400,19 @@ function loadSheet(tab,cb){
   }).catch(()=>{});
 }
 loadSheet("events",rows=>{
- const list=rows.filter(r=>r[2]&&r[0]!="tag").map(r=>({tag:r[0]||"ngo",tagName:TAGN[r[0]]||r[0],impact:(r[1]||"up").toLowerCase(),title:r[2],points:[r[3],r[4]],video:r[5]||"#",img:r[6],views:r[7]||""}));
- if(list.length)renderEvents(list);
-});
-loadSheet("week",rows=>{
- const list=rows.filter(r=>r[1]&&r[0]!="time").map(r=>({d:r[0],t:r[1],tags:(r[2]||"").split(",").map(s=>s.trim()).filter(Boolean)}));
- if(list.length)renderWeek(list);
+ let changed=false;
+ rows.filter(r=>r[0]&&r[0].toLowerCase()!="key"&&r[0].toLowerCase()!="tag").forEach(r=>{
+  const k=r[0].toUpperCase();
+  if(EVENT_VIDEOS[k]){
+   if(r[1])EVENT_VIDEOS[k].impact=r[1].toLowerCase();
+   if(r[2])EVENT_VIDEOS[k].video=r[2];
+   const pts=[r[3],r[4]].filter(Boolean);
+   if(pts.length)EVENT_VIDEOS[k].points=pts;
+   if(r[5])EVENT_VIDEOS[k].img=r[5];
+   changed=true;
+  }
+ });
+ if(changed)syncAll();
 });
 
 const now=new Date().getMonth();
