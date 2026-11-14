@@ -17,12 +17,11 @@ a{color:inherit;text-decoration:none}
 /* LEFT */
 .left{display:flex;flex-direction:column;gap:16px;position:sticky;top:24px;align-self:start}
 .topbar{display:flex;justify-content:space-between;align-items:center}
-.logo{display:inline-flex;align-items:center;gap:12px;padding:6px 16px 6px 8px;border-radius:16px;background:linear-gradient(135deg,rgba(61,220,132,.14),rgba(232,184,74,.1),rgba(255,107,107,.12));border:1px solid rgba(232,184,74,.45);box-shadow:0 0 24px rgba(61,220,132,.18),inset 0 0 12px rgba(232,184,74,.1)}
-.logo .bb{display:flex;align-items:center;gap:2px;padding:4px 8px;border-radius:11px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.12);font-size:16px;line-height:1;box-shadow:inset 0 0 10px rgba(0,0,0,.6)}
-.logo .bb .bull{filter:drop-shadow(0 0 6px #3ddc84)}
-.logo .bb .vs{font-size:10px;color:var(--gold);font-weight:800;margin:0 1px}
-.logo .bb .bear{filter:drop-shadow(0 0 6px #ff6b6b)}
-.logo .brand{font-family:'Chakra Petch',sans-serif;font-size:1.35rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;background:linear-gradient(90deg,#fff 0%,var(--gold) 52%,var(--green) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 22px rgba(232,184,74,.25)}
+.logo{display:inline-flex;align-items:center;gap:12px;padding:5px 18px 5px 6px;border-radius:16px;background:linear-gradient(135deg,#07130d 0%,rgba(22,45,32,.85) 55%,rgba(45,20,22,.7) 100%);border:1px solid rgba(232,184,74,.5);box-shadow:0 0 26px rgba(61,220,132,.2),0 0 26px rgba(255,92,92,.12)}
+.logo .bb-img{width:76px;height:46px;border-radius:11px;object-fit:cover;border:1px solid rgba(255,255,255,.15);box-shadow:0 0 14px rgba(61,220,132,.35),0 0 14px rgba(255,92,92,.25)}
+.logo .brand-wrap{display:flex;flex-direction:column;line-height:1.05}
+.logo .brand{font-family:'Chakra Petch',sans-serif;font-size:1.45rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;background:linear-gradient(90deg,#3ddc84 0%,#fff 45%,var(--gold) 75%,#ff6b6b 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo .brand-sub{font-size:.62rem;letter-spacing:1.8px;text-transform:uppercase;color:var(--gold);opacity:.9;margin-top:2px}
 .ev-time{font-size:10.5px;color:var(--gold);margin-top:2px}
 .vlink{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;padding:2px 8px;border-radius:999px;border:1px solid rgba(61,220,132,.5);background:rgba(61,220,132,.15);color:var(--green);font-weight:600}
 .vlink.wait{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:var(--mute);font-weight:400}
@@ -160,7 +159,7 @@ h2{font-size:28px;font-weight:700}
  <!-- ============ LEFT ============ -->
  <aside class="panel left">
   <div class="topbar">
-   <div class="logo"><span class="bb" title="Bull vs Bear"><span class="bull">🐂</span><span class="vs">⚡</span><span class="bear">🐻</span></span><span class="brand">GRAINDESK</span></div>
+   <div class="logo"><img class="bb-img" src="bull-bear.jpg" alt="Bull vs Bear"><div class="brand-wrap"><span class="brand">GRAINDESK</span><span class="brand-sub mono">BULL vs BEAR · CBOT</span></div></div>
    <a class="pill" id="ttTop" target="_blank">♪ Follow TikTok</a>
   </div>
   <h2>Góc nhìn sự kiện</h2>
