@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
 <title>GrainDesk – Góc nhìn thị trường ngũ cốc</title>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Chakra+Petch:wght@700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -269,7 +270,7 @@ function renderEvents(list){
   const badge=e.hasVideo
    ?`<span class="imp ${e.impact}"><img src="${e.impact=='up'?'bull.jpg':'bear.jpg'}" alt="">${e.impact=='up'?'BULL · DỰ BÁO TĂNG ▲':'BEAR · DỰ BÁO GIẢM ▼'}</span>`
    :`<span class="imp wait">⏳ CHỜ VIDEO NHẬN ĐỊNH</span>`;
-  return `<a class="ev ${i==0?'big '+st:''}" id="evcard-${e.key||i}" href="${e.video||TIKTOK}" target="_blank">
+  return `<a class="ev ${i==0?'big '+st:''}" id="evcard-${e.key||i}" href="${e.video||TIKTOK}" target="_blank" rel="noopener noreferrer">
    <div class="thumb" id="thumb-${e.key||i}" style="background-image:url('${e.img}')"><span class="play">▶</span><span class="views mono">${e.views}</span></div>
    <div class="body">
     <div class="row"><span class="tag t-${e.tag}">${e.tagName||TAGN[e.tag]||e.tag}</span>${badge}</div>
@@ -385,8 +386,8 @@ function buildLinkedFeed(upcoming){
   const hasV=Boolean(cfg.video&&cfg.video.trim());
   const st=hasV?(cfg.impact=='down'?'st-down':'st-up'):'st-wait';
   const badge=hasV
-   ?`<a class="vlink" href="${cfg.video}" target="_blank">▶ Xem video góc nhìn</a>`
-   :`<a class="vlink wait" href="${TIKTOK}" target="_blank">⏳ Sắp có video</a>`;
+   ?`<a class="vlink" href="${cfg.video}" target="_blank" rel="noopener noreferrer">▶ Xem video góc nhìn</a>`
+   :`<a class="vlink wait" href="${TIKTOK}" target="_blank" rel="noopener noreferrer">⏳ Sắp có video</a>`;
   return `<div class="it ${st} ${i==0?'first':''}"><div class="d mono">${w.d}</div><div class="t">${w.t}</div>
    <div class="tags"><span class="tag t-${focusTag}">${TAGN[focusTag]||focusTag}</span>${badge}</div></div>`;
  }).join("");
