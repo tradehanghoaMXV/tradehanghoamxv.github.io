@@ -29,6 +29,7 @@ a{color:inherit;text-decoration:none}
 .imp{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:3px 10px 3px 5px;border-radius:999px;border:1px solid transparent}
 .imp.up{background:#3ddc841c;border-color:#3ddc8445}
 .imp.down{background:#ff6b6b1c;border-color:#ff6b6b45}
+.imp.wait{background:rgba(232,184,74,.14);border-color:rgba(232,184,74,.45);color:var(--gold);padding:3px 10px}
 .imp img{width:20px;height:20px;border-radius:50%;object-fit:cover;border:1px solid currentColor}
 .ev-time{font-size:10.5px;color:var(--gold);margin-top:2px}
 .vlink{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;padding:2px 8px;border-radius:999px;border:1px solid rgba(61,220,132,.5);background:rgba(61,220,132,.15);color:var(--green);font-weight:600}
@@ -212,16 +213,16 @@ const EMAIL_NHAN = "email_cua_ban@gmail.com";   // email nhận danh sách đăn
 const SHEET_ID = ""; // Dán ID Google Sheets vào đây để tự động cập nhật tin sự kiện & lịch tuần
 
 // Cơ chế nối "Sự kiện sắp tới" <-> "Góc nhìn sự kiện"
-// Chỉ cần dán link video TikTok ứng với mã sự kiện (NOPA, INSPECT, CROP, EIA, EXPORT, COT, WASDE)
-// Hệ thống tự lấy ảnh bìa TikTok (oEmbed) và tự đồng bộ cả 2 cột!
+// Khi một sự kiện chưa có link video cụ thể (chứa "/video/"), thẻ sẽ ở trạng thái "Đang cập nhật nhận định".
+// Ngay khi bạn dán link video TikTok của sự kiện đó vào (hoặc điền trên Google Sheets), thẻ sẽ bật nhãn BULL/BEAR + lấy ảnh bìa TikTok thật!
 const EVENT_VIDEOS = {
- NOPA:    {focus:"dvu", impact:"up",   video:"https://www.tiktok.com/@wayturtles", points:["Ép dầu đậu tương Mỹ dự kiến duy trì mức cao","Hỗ trợ trực tiếp giá Dầu & Khô đậu tương CBOT"]},
- INSPECT: {focus:"dau", impact:"up",   video:"https://www.tiktok.com/@wayturtles", points:["Giao hàng xuất khẩu Đậu tương Mỹ sang Trung Quốc khả quan","Tâm điểm theo dõi tiến độ giao hàng tuần"]},
- CROP:    {focus:"ngo", impact:"down", video:"https://www.tiktok.com/@wayturtles", points:["Tiến độ thu hoạch Ngô Mỹ hoàn tất nhanh","Nguồn cung vụ mới dồi dào gây áp lực ngắn hạn"]},
- EIA:     {focus:"ngo", impact:"up",   video:"", points:["Sản lượng Ethanol duy trì cao hỗ trợ nhu cầu tiêu thụ Ngô","Theo dõi biến động tồn kho Ethanol Mỹ"]},
- EXPORT:  {focus:"dau", impact:"up",   video:"", points:["Doanh số bán hàng Đậu tương mới của USDA","Quan sát đơn hàng lớn từ Trung Quốc"]},
- COT:     {focus:"mi",  impact:"down", video:"", points:["Vị thế ròng của quỹ đầu cơ Managed Money trên Lúa mì","Quan sát lực mua/bán ròng cuối tuần"]},
- WASDE:   {focus:"dau", impact:"up",   video:"", points:["Báo cáo Cung – Cầu Thế giới quan trọng nhất tháng","Dự báo tồn kho cuối kỳ của Mỹ và Nam Mỹ"]},
+ NOPA:    {focus:"dvu", impact:"up",   video:"https://www.tiktok.com/@wayturtles", points:["Dự báo sản lượng ép dầu Mỹ duy trì cao, hỗ trợ giá Dầu & Khô ĐT","Phân tích vùng hỗ trợ/kháng cự trên chart 1D trước giờ ra tin"]},
+ INSPECT: {focus:"dau", impact:"down", video:"https://www.tiktok.com/@wayturtles", points:["Kịch bản giao hàng xuất khẩu Đậu tương & phản ứng giá ngắn hạn","Quan sát lực bán kỹ thuật quanh vùng kháng cự"]},
+ CROP:    {focus:"ngo", impact:"up",   video:"", points:[]},
+ EIA:     {focus:"ngo", impact:"up",   video:"", points:[]},
+ EXPORT:  {focus:"dau", impact:"up",   video:"", points:[]},
+ COT:     {focus:"mi",  impact:"down", video:"", points:[]},
+ WASDE:   {focus:"dau", impact:"up",   video:"", points:[]},
 };
 
 const FALLBACK_IMG={
@@ -266,16 +267,20 @@ function enrichTikTok(url,cb){
 }
 
 function renderEvents(list){
- document.getElementById("feed").innerHTML=list.map((e,i)=>`
-  <a class="ev ${i==0?'big':''}" id="evcard-${e.key||i}" href="${e.video||TIKTOK}" target="_blank">
+ document.getElementById("feed").innerHTML=list.map((e,i)=>{
+  const badge=e.hasVideo
+   ?`<span class="imp ${e.impact}"><img src="${e.impact=='up'?'bull.jpg':'bear.jpg'}" alt="">${e.impact=='up'?'BULL · DỰ BÁO TĂNG ▲':'BEAR · DỰ BÁO GIẢM ▼'}</span>`
+   :`<span class="imp wait">⏳ CHỜ VIDEO NHẬN ĐỊNH</span>`;
+  return `<a class="ev ${i==0?'big':''}" id="evcard-${e.key||i}" href="${e.video||TIKTOK}" target="_blank">
    <div class="thumb" id="thumb-${e.key||i}" style="background-image:url('${e.img}')"><span class="play">▶</span><span class="views mono">${e.views}</span></div>
    <div class="body">
-    <div class="row"><span class="tag t-${e.tag}">${e.tagName||TAGN[e.tag]||e.tag}</span><span class="imp ${e.impact}"><img src="${e.impact=='up'?'bull.jpg':'bear.jpg'}" alt="">${e.impact=='up'?'BULL · TĂNG ▲':'BEAR · GIẢM ▼'}</span></div>
+    <div class="row"><span class="tag t-${e.tag}">${e.tagName||TAGN[e.tag]||e.tag}</span>${badge}</div>
     ${e.timeStr?`<div class="ev-time mono">⏰ ${e.timeStr}</div>`:''}
     <h3>${e.title}</h3><ul>${e.points.filter(Boolean).map(p=>`<li>${p}</li>`).join("")}</ul>
-    <span class="more">${e.hasVideo?'▶ Xem video góc nhìn trên TikTok →':'⏳ Xem kênh TikTok @wayturtles →'}</span>
-   </div></a>`).join("");
- // Tự động lấy ảnh bìa thật từ link video TikTok nếu có
+    <span class="more">${e.hasVideo?'▶ Xem video dự báo & phân tích chart trên TikTok →':'♪ Follow @wayturtles để xem nhận định ngay khi lên sóng →'}</span>
+   </div></a>`;
+ }).join("");
+ // Tự động lấy ảnh bìa & tiêu đề thật từ link video TikTok nếu có
  list.forEach((e,i)=>{
   if(e.video&&e.video.includes("/video/")){
    enrichTikTok(e.video,meta=>{
@@ -355,7 +360,10 @@ function buildLinkedFeed(upcoming){
  return upcoming.slice(0,3).map(u=>{
   const cfg=EVENT_VIDEOS[u.key]||{};
   const mainTag=cfg.focus||u.tags[0]||"ngo";
-  const hasVideo=Boolean(cfg.video);
+  const hasVideo=Boolean(cfg.video&&cfg.video.trim());
+  const defaultPts=hasVideo
+   ?["Xem kịch bản dự báo biến động giá & phân tích đồ thị chi tiết trên video TikTok"]
+   :[`Dự báo tác động lên giá ${TAGN[mainTag]} & phân tích chart sẽ lên sóng trước giờ ra tin`,`Theo dõi kênh @wayturtles để cập nhật kịch bản giao dịch`];
   return {
    key:u.key,
    tag:mainTag,
@@ -363,11 +371,11 @@ function buildLinkedFeed(upcoming){
    impact:cfg.impact||"up",
    title:cfg.title||u.t,
    timeStr:u.d,
-   points:cfg.points||["Theo dõi phản ứng giá trước & sau giờ công bố báo cáo"],
-   video:cfg.video||TIKTOK,
+   points:(cfg.points&&cfg.points.length)?cfg.points:defaultPts,
+   video:hasVideo?cfg.video:TIKTOK,
    hasVideo,
    img:cfg.img||FALLBACK_IMG[mainTag],
-   views:hasVideo?"🎬 Video góc nhìn":"⏳ Sắp lên sóng"
+   views:hasVideo?"🎬 Đã có video":"⏳ Chờ lên sóng"
   };
  });
 }
