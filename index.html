@@ -34,8 +34,15 @@ a{color:inherit;text-decoration:none}
 .ev-time{font-size:10.5px;color:var(--gold);margin-top:2px}
 .vlink{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;padding:2px 8px;border-radius:999px;border:1px solid rgba(61,220,132,.5);background:rgba(61,220,132,.15);color:var(--green);font-weight:600}
 .vlink.wait{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:var(--mute);font-weight:400}
-.pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:7px 14px;border-radius:30px;border:1px solid var(--line);background:rgba(0,0,0,.35);transition:.2s}
-.pill:hover{border-color:var(--green)}
+.pill{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:#fff;padding:8px 18px;border-radius:999px;border:1px solid rgba(255,77,109,.8);background:linear-gradient(135deg,#ff0050 0%,#ff4d6d 55%,#00f2fe 140%);box-shadow:0 0 22px rgba(255,0,80,.6),0 0 40px rgba(0,242,254,.25);animation:heartbeat 1.45s ease-in-out infinite;transform-origin:center}
+.pill:hover{filter:brightness(1.15);box-shadow:0 0 30px rgba(255,0,80,.9),0 0 50px rgba(0,242,254,.5)}
+@keyframes heartbeat{
+ 0%,100%{transform:scale(1);box-shadow:0 0 18px rgba(255,0,80,.55)}
+ 14%{transform:scale(1.09);box-shadow:0 0 32px rgba(255,0,80,.95),0 0 48px rgba(0,242,254,.45)}
+ 28%{transform:scale(1);box-shadow:0 0 18px rgba(255,0,80,.55)}
+ 42%{transform:scale(1.06);box-shadow:0 0 28px rgba(255,0,80,.85),0 0 40px rgba(0,242,254,.35)}
+ 70%{transform:scale(1);box-shadow:0 0 18px rgba(255,0,80,.55)}
+}
 h2{font-size:28px;font-weight:700}
 .sub{color:var(--mute);font-size:13px;margin-top:-10px}
 .feed{display:flex;flex-direction:column;gap:12px}
@@ -121,9 +128,9 @@ h2{font-size:28px;font-weight:700}
  .ev{flex:1;min-height:0;padding:clamp(8px,1.2vh,14px);align-items:stretch}
  .ev.big{flex:1.35}
  .thumb,.ev.big .thumb{width:clamp(120px,10vw,190px);aspect-ratio:auto;height:auto;min-height:0}
- .ev h3{font-size:1.1rem}.ev.big h3{font-size:1.4rem}
- .ev ul{font-size:.92rem}.more{font-size:.88rem}
- h2{font-size:1.8rem}.sub{margin-top:-6px}
+ .ev h3{font-size:1rem;margin:4px 0 3px}.ev.big h3{font-size:1.18rem}
+ .ev ul{font-size:.82rem;line-height:1.42}.more{font-size:.8rem}
+ h2{font-size:1.65rem}
  .cta-box{padding:clamp(10px,1.4vh,16px)}
  .right{gap:clamp(12px,1.2vw,22px);min-height:0;display:flex;flex-direction:column}
  .bento{flex:1.02;min-height:0}
@@ -173,22 +180,6 @@ h2{font-size:28px;font-weight:700}
   </div>
   <h2>Góc nhìn sự kiện</h2>
   <div class="feed" id="feed"></div>
-
-  <div class="cta">
-   <a class="cta-box tt" id="ttBox" target="_blank">
-    <div><b>♪ Theo dõi TikTok</b><small>Phân tích ngắn mỗi ngày</small></div>
-    <span class="go">Follow ngay →</span>
-   </a>
-   <div class="cta-box mail">
-    <b>📩 Bản tin sáng thứ 2</b><small>Tổng hợp tuần + kịch bản giá. Miễn phí.</small>
-    <form id="mailForm" method="POST">
-     <input type="email" name="email" placeholder="Email của bạn" required>
-     <input type="hidden" name="_subject" value="Đăng ký bản tin GrainDesk">
-     <input type="hidden" name="_captcha" value="false">
-     <button type="submit">Đăng ký</button>
-    </form>
-   </div>
-  </div>
  </aside>
 
  <!-- ============ RIGHT ============ -->
@@ -254,8 +245,7 @@ const SEASON = [
 /* ================================================================ */
 
 const TAGN={ngo:"Ngô",dau:"Đậu tương",mi:"Lúa mì",dvu:"Dầu/Khô đậu"};
-document.getElementById("ttTop").href=document.getElementById("ttBox").href=TIKTOK;
-document.getElementById("mailForm").action="https://formsubmit.co/"+EMAIL_NHAN;
+document.getElementById("ttTop").href=TIKTOK;
 
 const OEMBED_CACHE={};
 function enrichTikTok(url,cb){
