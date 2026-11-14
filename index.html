@@ -208,13 +208,13 @@ const SHEET_ID = ""; // Dán ID Google Sheets vào đây để tự động cậ
 // Chỉ cần dán link video TikTok ứng với mã sự kiện (NOPA, INSPECT, CROP, EIA, EXPORT, COT, WASDE)
 // Hệ thống tự lấy ảnh bìa TikTok (oEmbed) và tự đồng bộ cả 2 cột!
 const EVENT_VIDEOS = {
- NOPA:    {impact:"up",   video:"https://www.tiktok.com/@wayturtles", points:["Ép dầu đậu tương Mỹ dự kiến duy trì mức cao","Hỗ trợ nhu cầu khô & dầu đậu tương CBOT"]},
- INSPECT: {impact:"up",   video:"https://www.tiktok.com/@wayturtles", points:["Giao hàng xuất khẩu đậu tương & ngô Mỹ khả quan","Đơn hàng từ Trung Quốc giữ nhịp ổn định"]},
- CROP:    {impact:"down", video:"https://www.tiktok.com/@wayturtles", points:["Thu hoạch vụ mùa Mỹ hoàn tất nhanh","Nguồn cung ngắn hạn dồi dào gây áp lực giá"]},
- EIA:     {impact:"up",   video:"", points:["Sản lượng Ethanol duy trì cao hỗ trợ nhu cầu Ngô","Theo dõi biến động tồn kho nhiên liệu sinh học"]},
- EXPORT:  {impact:"up",   video:"", points:["Doanh số xuất khẩu tuần của USDA cho Ngô, Đậu, Lúa mì","Tâm điểm sức mua từ Trung Quốc & Mexico"]},
- COT:     {impact:"down", video:"", points:["Vị thế ròng của các quỹ đầu cơ Managed Money","Quan sát dòng tiền chốt lời cuối tuần"]},
- WASDE:   {impact:"up",   video:"", points:["Báo cáo Cung – Cầu Thế giới quan trọng nhất tháng","Tác động mạnh biên độ cả 5 mặt hàng CBOT"]},
+ NOPA:    {focus:"dvu", impact:"up",   video:"https://www.tiktok.com/@wayturtles", points:["Ép dầu đậu tương Mỹ dự kiến duy trì mức cao","Hỗ trợ trực tiếp giá Dầu & Khô đậu tương CBOT"]},
+ INSPECT: {focus:"dau", impact:"up",   video:"https://www.tiktok.com/@wayturtles", points:["Giao hàng xuất khẩu Đậu tương Mỹ sang Trung Quốc khả quan","Tâm điểm theo dõi tiến độ giao hàng tuần"]},
+ CROP:    {focus:"ngo", impact:"down", video:"https://www.tiktok.com/@wayturtles", points:["Tiến độ thu hoạch Ngô Mỹ hoàn tất nhanh","Nguồn cung vụ mới dồi dào gây áp lực ngắn hạn"]},
+ EIA:     {focus:"ngo", impact:"up",   video:"", points:["Sản lượng Ethanol duy trì cao hỗ trợ nhu cầu tiêu thụ Ngô","Theo dõi biến động tồn kho Ethanol Mỹ"]},
+ EXPORT:  {focus:"dau", impact:"up",   video:"", points:["Doanh số bán hàng Đậu tương mới của USDA","Quan sát đơn hàng lớn từ Trung Quốc"]},
+ COT:     {focus:"mi",  impact:"down", video:"", points:["Vị thế ròng của quỹ đầu cơ Managed Money trên Lúa mì","Quan sát lực mua/bán ròng cuối tuần"]},
+ WASDE:   {focus:"dau", impact:"up",   video:"", points:["Báo cáo Cung – Cầu Thế giới quan trọng nhất tháng","Dự báo tồn kho cuối kỳ của Mỹ và Nam Mỹ"]},
 };
 
 const FALLBACK_IMG={
@@ -344,15 +344,15 @@ function autoUpcomingEvents(now=new Date()){
 }
 
 function buildLinkedFeed(upcoming){
- // Nối 3 sự kiện sắp tới gần nhất sang cột "Góc nhìn sự kiện"
+ // Nối 3 sự kiện sắp tới gần nhất sang cột "Góc nhìn sự kiện" (mỗi sự kiện hiển thị 1 mặt hàng tâm điểm)
  return upcoming.slice(0,3).map(u=>{
   const cfg=EVENT_VIDEOS[u.key]||{};
-  const mainTag=u.tags[0]||"ngo";
+  const mainTag=cfg.focus||u.tags[0]||"ngo";
   const hasVideo=Boolean(cfg.video);
   return {
    key:u.key,
    tag:mainTag,
-   tagName:u.tags.map(t=>TAGN[t]||t).join(" · "),
+   tagName:TAGN[mainTag]||mainTag,
    impact:cfg.impact||"up",
    title:cfg.title||u.t,
    timeStr:u.d,
@@ -365,15 +365,16 @@ function buildLinkedFeed(upcoming){
  });
 }
 
-function renderWeek(list){
+ function renderWeek(list){
  document.getElementById("week").innerHTML=list.map(w=>{
   const cfg=EVENT_VIDEOS[w.key]||{};
+  const focusTag=cfg.focus||w.tags[0]||"ngo";
   const hasV=Boolean(cfg.video);
   const badge=hasV
    ?`<a class="vlink" href="${cfg.video}" target="_blank">▶ Xem video góc nhìn</a>`
    :`<a class="vlink wait" href="${TIKTOK}" target="_blank">⏳ Sắp có video</a>`;
   return `<div class="it"><div class="d mono">${w.d}</div><div class="t">${w.t}</div>
-   <div class="tags">${w.tags.map(t=>`<span class="tag t-${t}">${TAGN[t]||t}</span>`).join("")}${badge}</div></div>`;
+   <div class="tags"><span class="tag t-${focusTag}">${TAGN[focusTag]||focusTag}</span>${badge}</div></div>`;
  }).join("");
 }
 
