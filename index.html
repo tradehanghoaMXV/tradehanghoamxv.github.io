@@ -65,6 +65,8 @@ h2{font-size:28px;font-weight:700}
 .t-dau{color:var(--green);border-color:#3ddc8455;background:#3ddc8414}
 .t-mi{color:#e7a76b;border-color:#e7a76b55;background:#e7a76b14}
 .t-dvu{color:#7fc8ff;border-color:#7fc8ff55;background:#7fc8ff14}
+.t-xau{color:#fbbf24;border-color:#fbbf2466;background:#fbbf2418}
+.t-btc{color:#fb923c;border-color:#fb923c66;background:#fb923c18}
 .imp{font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px}
 .up{color:var(--green)}.down{color:var(--red)}
 .imp.up{background:#3ddc8420}.imp.down{background:#ff6b6b20}
@@ -131,7 +133,7 @@ h2{font-size:28px;font-weight:700}
 /* DESKTOP: full width, fill screen, balanced */
 @media(min-width:981px){
  html{font-size:clamp(14px,0.95vw,18px)}
- .app{max-width:none;width:100%;height:100vh;overflow:hidden;padding:clamp(14px,1.4vw,28px);gap:clamp(12px,1.2vw,22px);grid-template-columns:1fr 1.25fr;grid-template-rows:minmax(0,1fr);align-items:stretch}
+ .app{max-width:none;width:100%;height:100vh;overflow:hidden;padding:clamp(14px,1.4vw,28px);gap:clamp(12px,1.2vw,22px);grid-template-columns:1.25fr 1fr;grid-template-rows:minmax(0,1fr);align-items:stretch}
  .left{position:static;align-self:stretch;min-height:0;gap:clamp(8px,1.2vh,16px);padding:clamp(14px,1.4vw,24px)}
  .feed{flex:1;min-height:0;gap:clamp(8px,1.2vh,14px)}
  .ev{flex:1;min-height:0;padding:clamp(8px,1.2vh,14px);align-items:stretch}
@@ -181,17 +183,7 @@ h2{font-size:28px;font-weight:700}
 <body>
 <div class="app">
 
- <!-- ============ LEFT ============ -->
- <aside class="panel left">
-  <div class="topbar">
-   <div class="logo"><span class="bb-pair"><img class="bb-ic bull" src="bull.jpg" alt="Bull"><span class="zap">⚡</span><img class="bb-ic bear" src="bear.jpg" alt="Bear"></span><span class="brand">GRAINDESK</span></div>
-   <a class="pill" id="ttTop" target="_blank">♪ Follow TikTok</a>
-  </div>
-  <h2>Góc nhìn sự kiện</h2>
-  <div class="feed" id="feed"></div>
- </aside>
-
- <!-- ============ RIGHT ============ -->
+ <!-- ============ LEFT (Nông sản CBOT · Sự kiện · Mùa vụ) ============ -->
  <main class="right">
   <section class="bento" id="bento"></section>
   <section class="bottom">
@@ -201,6 +193,17 @@ h2{font-size:28px;font-weight:700}
   </section>
   <p class="disc">Thông tin mang tính góc nhìn cá nhân, không phải khuyến nghị đầu tư. Giao dịch phái sinh hàng hóa có rủi ro cao.</p>
  </main>
+
+ <!-- ============ RIGHT (Góc nhìn liên thị trường) ============ -->
+ <aside class="panel left">
+  <div class="topbar">
+   <div class="logo"><span class="bb-pair"><img class="bb-ic bull" src="bull.jpg" alt="Bull"><span class="zap">⚡</span><img class="bb-ic bear" src="bear.jpg" alt="Bear"></span><span class="brand">GRAINDESK</span></div>
+   <a class="pill" id="ttTop" target="_blank">♪ Follow TikTok</a>
+  </div>
+  <h2>Góc nhìn liên thị trường</h2>
+  <p class="sub">Video phân tích Vàng, Crypto & thị trường tài chính mới nhất</p>
+  <div class="feed" id="feed"></div>
+ </aside>
 </div>
 
 <script>
@@ -228,8 +231,40 @@ const FALLBACK_IMG={
  dau:"https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=400",
  ngo:"https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",
  mi:"https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400",
- dvu:"https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400"
+ dvu:"https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400",
+ xau:"https://images.unsplash.com/photo-1610375461246-83df859d849d?w=400",
+ btc:"https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=400"
 };
+
+// Danh sách "Góc nhìn liên thị trường" (mới nhất theo thời gian lên đầu)
+const INTERMARKET_VIDEOS = [
+ {
+  key:"xau-1611",
+  tag:"xau",
+  tagName:"Vàng · XAU",
+  impact:"wait",
+  timeStr:"16/11/2026 · Mới nhất",
+  title:"Diễn biến Vàng (GC=F) đầu tuần · Khung H1",
+  points:["Giảm chậm lại ở cuối xu hướng giảm mạnh","Dừng ở mức quan sát, chờ xác nhận hướng đi"],
+  video:"https://www.tiktok.com/@wayturtles/video/7708599540932300053",
+  hasVideo:true,
+  img:FALLBACK_IMG.xau,
+  views:"🎬 Mới đăng"
+ },
+ {
+  key:"btc-1511",
+  tag:"btc",
+  tagName:"Crypto · BTC",
+  impact:"down",
+  timeStr:"15/11/2026",
+  title:"BTCUSDT.P khung H1 · Đảo chiều hay nhịp hồi?",
+  points:["Rút chân vượt EMA9, phá đà giảm ngắn hạn","Ưu tiên chờ suy yếu quanh WMA45 để xét bán"],
+  video:"https://www.tiktok.com/@wayturtles/video/7708275645826043157",
+  hasVideo:true,
+  img:FALLBACK_IMG.btc,
+  views:"🎬 Đã có video"
+ }
+];
 
 // Ô giá: data = chuỗi giá gần đây để vẽ biểu đồ
 const PRICES = [
@@ -268,7 +303,9 @@ function renderEvents(list){
  document.getElementById("feed").innerHTML=list.map((e,i)=>{
   const st=e.hasVideo?(e.impact=='down'?'bear':'bull'):'wait';
   const badge=e.hasVideo
-   ?`<span class="imp ${e.impact}"><img src="${e.impact=='up'?'bull.jpg':'bear.jpg'}" alt="">${e.impact=='up'?'BULL · DỰ BÁO TĂNG ▲':'BEAR · DỰ BÁO GIẢM ▼'}</span>`
+   ?(e.impact=='wait'
+    ?`<span class="imp wait">⏳ CHỜ XÁC NHẬN</span>`
+    :`<span class="imp ${e.impact}"><img src="${e.impact=='up'?'bull.jpg':'bear.jpg'}" alt="">${e.impact=='up'?'BULL · DỰ BÁO TĂNG ▲':'BEAR · DỰ BÁO GIẢM ▼'}</span>`)
    :`<span class="imp wait">⏳ CHỜ VIDEO NHẬN ĐỊNH</span>`;
   return `<a class="ev ${i==0?'big '+st:''}" id="evcard-${e.key||i}" href="${e.video||TIKTOK}" target="_blank" rel="noopener noreferrer">
    <div class="thumb" id="thumb-${e.key||i}" style="background-image:url('${e.img}')"><span class="play">▶</span><span class="views mono">${e.views}</span></div>
@@ -396,7 +433,7 @@ function buildLinkedFeed(upcoming){
 function syncAll(){
  const up=autoUpcomingEvents();
  renderWeek(up);
- renderEvents(buildLinkedFeed(up));
+ renderEvents(INTERMARKET_VIDEOS);
 }
 
 // Khởi tạo bằng dữ liệu tự động thời gian thực (tự đồng bộ 2 cột)
