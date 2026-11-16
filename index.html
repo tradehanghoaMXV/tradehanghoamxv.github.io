@@ -349,32 +349,49 @@ function renderPrices(list){
    <div class="axis mono"><span>08:00</span><span>Mở cửa phiên CBOT</span><span>Hiện tại</span></div></div>`}).join("");
 }
 
+function etOffsetHours(d){
+ // Tự động phát hiện giờ mùa hè Mỹ (EDT = UTC-4 -> lệch VN +11h) hay mùa đông (EST = UTC-5 -> lệch VN +12h)
+ try{
+  const s=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',timeZoneName:'short'}).format(d);
+  return s.includes('EDT')?11:12;
+ }catch{return 12;}
+}
+
 function autoUpcomingEvents(now=new Date()){
- // Tạo lịch báo cáo chuẩn của USDA / EIA / CFTC / NOPA theo giờ Việt Nam (UTC+7)
- // Quy tắc giờ chuẩn (Standard Time tháng 11–tháng 3):
- // - USDA Export Inspections: Thứ 2 hàng tuần · 23:00
- // - USDA Crop Progress: Thứ 3 hàng tuần · 04:00 (tức 16:00 ET Thứ 2)
- // - EIA Ethanol Production: Thứ 4 hàng tuần · 22:30 (10:30 ET)
- // - USDA Weekly Export Sales: Thứ 5 hàng tuần · 20:30 (08:30 ET)
- // - CFTC COT Report: Thứ 7 hàng tuần · 03:30 (15:30 ET Thứ 6)
- // - NOPA Crush Report: Ngày 15 hàng tháng · 23:00
- // - USDA WASDE Report: Khoảng ngày 10–12 hàng tháng · 23:00
- const rules=[
-  {key:"INSPECT",type:"w",dow:1,h:23,m:0,t:"USDA Export Inspections (Giao hàng xuất khẩu)",tags:["ngo","dau","mi"]},
-  {key:"CROP",type:"w",dow:2,h:4,m:0,t:"USDA Crop Progress (Tiến độ mùa vụ Mỹ)",tags:["ngo","dau","mi"]},
-  {key:"EIA",type:"w",dow:3,h:22,m:30,t:"EIA Ethanol Report (Sản lượng & tồn kho Ethanol)",tags:["ngo","dvu"]},
-  {key:"EXPORT",type:"w",dow:4,h:20,m:30,t:"USDA Weekly Export Sales (Doanh số xuất khẩu)",tags:["ngo","dau","mi","dvu"]},
-  {key:"COT",type:"w",dow:6,h:3,m:30,t:"CFTC COT Report (Vị thế quỹ đầu cơ Managed Money)",tags:["ngo","dau","mi","dvu"]},
-  {key:"WASDE",type:"m",dom:10,h:23,m:0,t:"Báo cáo Cung – Cầu Thế giới USDA WASDE",tags:["ngo","dau","mi","dvu"]},
-  {key:"NOPA",type:"m",dom:15,h:23,m:0,t:"NOPA Crush Report (Sản lượng ép dầu đậu tương Mỹ)",tags:["dau","dvu"]},
+ // Lịch công bố chuẩn theo giờ New York (ET) -> tự động quy đổi sang giờ Việt Nam (UTC+7)
+ // - USDA Export Inspections: Thứ 2 · 11:00 ET
+ // - USDA Crop Progress: Thứ 2 · 16:00 ET (chỉ phát hành tháng 4–11)
+ // - EIA Ethanol Production: Thứ 4 · 10:30 ET
+ // - USDA Weekly Export Sales: Thứ 5 · 08:30 ET
+ // - CFTC COT Report: Thứ 6 · 15:30 ET
+ // - USDA WASDE: Ngày 10 hàng tháng · 12:00 ET (nếu rơi cuối tuần tự dời sang Thứ 2)
+ // - NOPA Crush: Ngày 15 hàng tháng · 12:00 ET (nếu rơi cuối tuần tự dời sang Thứ 2)
+ const weekly=[
+  {key:"INSPECT",dow:1,h:11,m:0,t:"USDA Export Inspections (Giao hàng xuất khẩu)",tags:["ngo","dau","mi"]},
+  {key:"CROP",dow:1,h:16,m:0,season:[3,10],t:"USDA Crop Progress (Tiến độ mùa vụ Mỹ)",tags:["ngo","dau","mi"]},
+  {key:"EIA",dow:3,h:10,m:30,t:"EIA Ethanol Report (Sản lượng & tồn kho Ethanol)",tags:["ngo","dvu"]},
+  {key:"EXPORT",dow:4,h:8,m:30,t:"USDA Weekly Export Sales (Doanh số xuất khẩu)",tags:["ngo","dau","mi","dvu"]},
+  {key:"COT",dow:5,h:15,m:30,t:"CFTC COT Report (Vị thế quỹ đầu cơ Managed Money)",tags:["ngo","dau","mi","dvu"]},
+ ];
+ const monthly=[
+  {key:"WASDE",dom:10,h:12,m:0,t:"Báo cáo Cung – Cầu Thế giới USDA WASDE",tags:["ngo","dau","mi","dvu"]},
+  {key:"NOPA",dom:15,h:12,m:0,t:"NOPA Crush Report (Sản lượng ép dầu đậu tương Mỹ)",tags:["dau","dvu"]},
  ];
  const list=[];
- for(let i=0;i<=35;i++){
+ for(let i=-2;i<=35;i++){
   const d=new Date(now.getTime()+i*86400000);
-  const dow=d.getDay(),dom=d.getDate();
-  for(const r of rules){
-   if((r.type=="w"&&dow==r.dow)||(r.type=="m"&&dom==r.dom)){
-    const evTime=new Date(d.getFullYear(),d.getMonth(),d.getDate(),r.h,r.m,0);
+  const dow=d.getDay(),mon=d.getMonth(),dom=d.getDate();
+  for(const r of weekly){
+   if(dow===r.dow && (!r.season || (mon>=r.season[0]&&mon<=r.season[1]))){
+    const evTime=new Date(d.getFullYear(),mon,dom,r.h+etOffsetHours(d),r.m,0);
+    if(evTime>now)list.push({key:r.key,dt:evTime,t:r.t,tags:r.tags});
+   }
+  }
+  for(const r of monthly){
+   if(dom===r.dom){
+    const shift=dow===6?2:(dow===0?1:0); // Thứ 7 -> +2 ngày (Thứ 2), Chủ Nhật -> +1 ngày (Thứ 2)
+    const target=new Date(d.getFullYear(),mon,dom+shift);
+    const evTime=new Date(target.getFullYear(),target.getMonth(),target.getDate(),r.h+etOffsetHours(target),r.m,0);
     if(evTime>now)list.push({key:r.key,dt:evTime,t:r.t,tags:r.tags});
    }
   }
